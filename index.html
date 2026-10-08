@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechQuiz — Python & Ada Lovelace</title>
 <style>
+
 :root{
   --bg:#060912; --panel:#0c1220; --panel2:#10192b; --text:#eef5ff;
   --muted:#91a1b8; --cyan:#29d9ff; --purple:#8b5cf6; --green:#35e39a;
@@ -86,6 +87,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 footer{text-align:center;color:#64748b;font-size:12px;padding:0 0 30px}
 .toast{position:fixed;right:20px;bottom:20px;padding:12px 16px;border:1px solid var(--border);background:#111a2b;border-radius:12px;color:var(--text);display:none}
 @media(max-width:700px){.levels{grid-template-columns:1fr}.card{padding:20px}.quiz-head{align-items:flex-start}.question-row{flex-wrap:wrap}.hint-btn{margin-left:0}.actions{gap:10px}.actions button{flex:1}}
+
 </style>
 </head>
 <body>
@@ -103,10 +105,10 @@ footer{text-align:center;color:#64748b;font-size:12px;padding:0 0 30px}
       <p>10 questões aleatórias: 5 de Python e 5 sobre Ada Lovelace.</p>
       <span class="badge">DISPONÍVEL</span>
     </div>
-    <div class="level disabled">
+    <div class="level" onclick="startQuiz('medium')">
       <div class="level-icon">◈</div><h2>Médio</h2>
-      <p>Novos desafios serão adicionados em breve.</p>
-      <span class="badge">EM BREVE</span>
+      <p>10 questões aleatórias das 25 questões de nível médio.</p>
+      <span class="badge">DISPONÍVEL</span>
     </div>
     <div class="level disabled">
       <div class="level-icon">⬢</div><h2>Difícil</h2>
@@ -151,7 +153,7 @@ footer{text-align:center;color:#64748b;font-size:12px;padding:0 0 30px}
 </div>
 <div id="toast" class="toast"></div>
 
-<script>
+
 const questions = [
  {cat:"Python",q:"Qual é a principal função do comando print() em Python?",a:["Ler um dado inserido pelo usuário.","Exibir uma mensagem ou resultado na tela.","Somar dois números inteiros.","Criar uma variável no código."],c:1,h:"Pense no que aparece no terminal quando você usa este comando."},
  {cat:"Python",q:"Qual é a saída correta do comando print(5 + 3 * 2)?",a:["16","11","10","13"],c:1,h:"A multiplicação é feita antes da soma."},
@@ -245,6 +247,138 @@ function showResult(){
   });
 }
 function goHome(){show("home")}
+
+
+<script>
+let currentMode = "easy";
+
+const easyQuestions = [
+ {cat:"Python",q:"Qual é a principal função do comando print() em Python?",a:["Ler um dado inserido pelo usuário.","Exibir uma mensagem ou resultado na tela.","Somar dois números inteiros.","Criar uma variável no código."],c:1,h:"Pense no que aparece no terminal quando você usa este comando."},
+ {cat:"Python",q:"Qual é a saída correta do comando print(5 + 3 * 2)?",a:["16","11","10","13"],c:1,h:"A multiplicação é feita antes da soma."},
+ {cat:"Python",q:"Qual função em Python é usada para receber dados digitados pelo usuário?",a:["get()","read()","input()","write()"],c:2,h:"É a função usada para entrada de dados pelo teclado."},
+ {cat:"Python",q:"Como declaramos uma variável chamada idade que armazena o valor inteiro 15?",a:["int idade = 15;","idade := 15","idade = 15","var idade = 15"],c:2,h:"Em Python, a atribuição usa um único sinal de igual."},
+ {cat:"Python",q:"Qual dos seguintes tipos representa um texto (String) em Python?",a:["int","float","str","bool"],c:2,h:"É a abreviação de string."},
+ {cat:"Python",q:"Qual é o operador usado para verificar se dois valores são IGUAIS em Python?",a:["=","==","===","is"],c:1,h:"Ele usa dois sinais de igual."},
+ {cat:"Python",q:"O que o operador % (módulo) faz em Python?",a:["Calcula a porcentagem de um número.","Eleva um número a uma potência.","Retorna o resto de uma divisão inteira.","Divide um número por 100."],c:2,h:"Pense no que sobra depois de uma divisão inteira."},
+ {cat:"Python",q:"Qual das seguintes estruturas é usada para tomar decisões (condicional)?",a:["for","while","if / else","def"],c:2,h:"É a estrutura usada para dizer: se isso acontecer, faça aquilo."},
+ {cat:"Python",q:"O que a função len(\"Python\") retorna?",a:["6","5","\"Python\"","True"],c:0,h:"Conte quantos caracteres há na palavra."},
+ {cat:"Python",q:"Qual símbolo é usado em Python para escrever um comentário de uma linha?",a:["//","/*","#","--"],c:2,h:"É um símbolo único usado no começo do comentário."},
+ {cat:"Python",q:"Como convertemos um texto \"10\" em um número inteiro em Python?",a:["str(\"10\")","int(\"10\")","float(\"10\")","convert(\"10\")"],c:1,h:"Use a função cujo nome representa o tipo inteiro."},
+ {cat:"Python",q:"Qual será a saída do comando print(\"Olá \" + \"Mundo\")?",a:["OláMundo","Olá Mundo","Erro","\"Olá \" + \"Mundo\""],c:1,h:"O operador + pode juntar strings."},
+ {cat:"Python",q:"Qual tipo de dado pode assumir apenas os valores True ou False?",a:["str","float","bool","int"],c:2,h:"É o tipo lógico/booleano."},
+ {cat:"Python",q:"O que acontece se executarmos o código print(10 / 2) em Python?",a:["Exibe 5 (do tipo inteiro).","Exibe 5.0 (do tipo ponto flutuante).","Ocorre um erro de sintaxe.","Exibe 10/2."],c:1,h:"Em Python, a divisão com / produz um número de ponto flutuante."},
+ {cat:"Python",q:"Em Python, qual é o sinal correto utilizado para atribuir um valor a uma variável?",a:["->","=",":","=="],c:1,h:"Não confunda atribuição com comparação."},
+ {cat:"Ada Lovelace",q:"Em qual país Ada Lovelace nasceu?",a:["Brasil","Estados Unidos","Inglaterra (Reino Unido)","Japão"],c:2,h:"Ela nasceu no Reino Unido."},
+ {cat:"Ada Lovelace",q:"Qual é o título oficial concedido a Ada por seu casamento, pelo qual ela ficou mundialmente conhecida?",a:["Rainha da Inglaterra","Condessa de Lovelace","Princesa de Gales","Duquesa de Cambridge"],c:1,h:"O título contém o nome pelo qual ela ficou conhecida."},
+ {cat:"Ada Lovelace",q:"Na época de Ada Lovelace, os computadores como conhecemos hoje (com tela e teclado) já existiam?",a:["Sim, ela usava um notebook de última geração.","Sim, mas apenas em formato de computador de mesa.","Não, os computadores eletrônicos ainda não tinham sido inventados.","Não, as pessoas só usavam celulares."],c:2,h:"Pense na época histórica em que Ada viveu."},
+ {cat:"Ada Lovelace",q:"Quando Ada era criança, o que a sua mãe a incentivou a estudar para que ela não seguisse a carreira artística de seu pai?",a:["Pintura e Desenho","Dança e Teatro","Matemática e Ciência","Música e Culinária"],c:2,h:"A área envolve números, lógica e investigação."},
+ {cat:"Ada Lovelace",q:"Que tipo de máquina mecânica de voar Ada Lovelace tentou projetar quando ainda era uma adolescente?",a:["Um avião supersônico","Um foguete para ir à Lua","Uma máquina voadora (com asas mecânicas como as de um passarinho)","Um helicóptero com motor elétrico"],c:2,h:"A ideia tinha asas mecânicas inspiradas em um pássaro."},
+ {cat:"Ada Lovelace",q:"As instruções e códigos desenvolvidos por Ada Lovelace eram inseridos nas máquinas através de:",a:["Pendrives","Cartões perfurados (cartões de papel com furos)","Cabos USB","Disquetes mágicos"],c:1,h:"Era uma tecnologia física baseada em papel e furos."},
+ {cat:"Ada Lovelace",q:"O pai de Ada Lovelace era muito famoso em sua época por ser um:",a:["Poeta","Rei","Médico","Piloto"],c:0,h:"Ele era conhecido principalmente por sua poesia."},
+ {cat:"Ada Lovelace",q:"Hoje em dia, existe um dia do ano dedicado a celebrar as conquistas das mulheres na ciência e tecnologia em homenagem a Ada. Como é chamado esse dia?",a:["Dia da Informática","Dia Mundial da Internet","Ada Lovelace Day (Dia de Ada Lovelace)","Dia do Programador de Python"],c:2,h:"O nome do dia leva diretamente o nome de Ada."},
+ {cat:"Ada Lovelace",q:"Ada Lovelace faleceu ainda muito jovem, com apenas:",a:["20 anos","36 anos","50 anos","80 anos"],c:1,h:"A idade está na casa dos 30."},
+ {cat:"Ada Lovelace",q:"A ideia principal de Ada que mudou o mundo foi perceber que as máquinas do futuro não serviriam apenas para calcular números, mas também para processar:",a:["Apenas moedas de ouro","Qualquer tipo de informação (como música, imagens e textos)","Apenas equações de matemática básica","Apenas previsões do tempo"],c:1,h:"A ideia vai além de números: pense em diferentes formas de informação."}
+];
+
+let quiz=[], index=0, score=0, answered=false, userAnswers=[];
+
+function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5)}
+
+
+// 25 QUESTÕES DE NÍVEL MÉDIO
+const mediumQuestions = [
+{cat:"Python",q:"O que é um algoritmo?",a:["Uma sequência definida para alcançar um objetivo","Sequência de passos infinita","Jeito fácil de alcançar seu objetivo","É um nome simplificado para um código"],c:0,h:"Pense em uma sequência organizada de passos para resolver um problema."},
+{cat:"Python",q:"Qual nome de variável vai ser inválido?",a:["média final","media_final","Media_Final","mediafinal"],c:0,h:"Observe se o nome possui algo que Python não permite em identificadores."},
+{cat:"Python",q:"Qual código vai dar erro?",a:["a = int(input())","print(a)","2 = input()","print(\"Olá\")"],c:2,h:"Pense se um número pode receber uma atribuição."},
+{cat:"Python",q:"No código print(\"Hoje irei à festa!!\"), o que irá aparecer na tela quando executar o código?",a:["Hoje irei à festa!!","\"hoje irei à festa!!\"","print(\"Hoje irei à festa!!\")","nada"],c:0,h:"O comando print exibe o conteúdo que está dentro dele."},
+{cat:"Python",q:"No comando float(input()), o usuário pode digitar um:",a:["texto","número decimal","número inteiro","uma condição"],c:1,h:"Pense no tipo de dado representado por float."},
+{cat:"Python",q:"O que é uma variável?",a:["Uma \"gaveta\" onde guarda informações","Um tipo de erro","Código de leitura","Código condicional"],c:0,h:"Imagine um espaço usado para guardar uma informação."},
+{cat:"Python",q:"Marque o par \"valor e tipo\" correto.",a:["valor = 16.5, tipo = int","valor = \"F\", tipo = int","valor = 2.5, tipo = float","valor = 294.5, tipo = str"],c:2,h:"Observe qual tipo combina com um número decimal."},
+{cat:"Python",q:"No código a = input(); b = input(); print(soma), o que há de errado?",a:["tudo","não tem a variável \"soma\"","nada","o print está sem aspas"],c:1,h:"Procure no código uma variável usada no print que não foi criada."},
+{cat:"Python",q:"No código a=5, b=3, print(f\"{a+b}\"), o que irá aparecer na tela quando executar?",a:["8","Nada","{a+b}","5"],c:0,h:"A expressão dentro das chaves é calculada."},
+{cat:"Python",q:"Observe: idade = 15; idade = idade + 2; print(idade). Qual será o resultado?",a:["15","17","2","152"],c:1,h:"A variável recebe seu valor anterior mais 2."},
+{cat:"Python",q:"Qual é a principal diferença entre = e == em Python?",a:["= compara valores e == cria variáveis","= atribui um valor e == compara valores","Os dois fazem exatamente a mesma coisa","== serve para comentários"],c:1,h:"Um operador é usado para atribuição e o outro para comparação."},
+{cat:"Ada Lovelace",q:"Por que Ada Lovelace é frequentemente considerada uma das primeiras programadoras da história?",a:["Porque criou o primeiro computador eletrônico moderno","Porque escreveu um conjunto de instruções para uma máquina que poderia realizar cálculos","Porque inventou a internet","Porque criou a linguagem Python"],c:1,h:"Pense no conjunto de instruções que ela desenvolveu para uma máquina."},
+{cat:"Python",q:"Uma variável chamada nome recebe \"Ada Lovelace\". Qual é o tipo de dado armazenado?",a:["int","bool","str","float"],c:2,h:"É um texto, não um número."},
+{cat:"Python",q:"Qual situação demonstra melhor a utilidade de uma variável?",a:["Guardar uma informação para utilizá-la posteriormente no programa","Apagar automaticamente o programa","Fazer o computador funcionar sem código","Transformar qualquer número em texto"],c:0,h:"Variáveis servem para armazenar informações que podem ser usadas depois."},
+{cat:"Ada Lovelace",q:"Qual era a relação entre Ada Lovelace e Charles Babbage?",a:["Eram irmãos","Eram mãe e filho","Ada estudou e trabalhou intelectualmente com as ideias de Babbage","Ada era funcionária de uma empresa criada por Babbage"],c:2,h:"Eles trabalharam intelectualmente com as ideias relacionadas às máquinas de Babbage."},
+{cat:"Ada Lovelace",q:"Ada Lovelace percebeu algo que ia além de simplesmente fazer contas. Qual era essa ideia?",a:["Máquinas poderiam seguir instruções para trabalhar com diferentes tipos de informação","Máquinas nunca poderiam fazer cálculos","Máquinas deveriam substituir todas as pessoas","Máquinas só poderiam funcionar com números escritos à mão"],c:0,h:"A ideia envolve máquinas seguindo instruções para lidar com diferentes informações."},
+{cat:"Python",q:"Observe: a=5; b=2; print(a + b * 3). Qual será o resultado?",a:["21","11","15","17"],c:1,h:"Lembre-se da ordem das operações: a multiplicação vem antes da soma."},
+{cat:"Ada Lovelace",q:"Por que os cartões perfurados eram importantes nas máquinas da época?",a:["Podiam representar instruções que a máquina deveria seguir","Serviam para conectar a máquina à internet","Eram usados como telas","Serviam para armazenar eletricidade"],c:0,h:"Pense na função dos furos: eles representavam instruções."},
+{cat:"Ada Lovelace",q:"Qual alternativa melhor explica o que era um algoritmo no contexto do trabalho de Ada?",a:["Uma sequência organizada de instruções para realizar uma tarefa","Uma peça física da máquina","Um tipo de combustível","Um aparelho usado para imprimir documentos"],c:0,h:"Um algoritmo é uma sequência organizada de instruções."},
+{cat:"Ada Lovelace",q:"Qual relação podemos fazer entre o trabalho de Ada Lovelace e linguagens como Python?",a:["Ambos envolvem a criação de instruções para que uma máquina execute tarefas","Ada Lovelace criou diretamente a linguagem Python","Python já existia na época de Ada","O trabalho de Ada não tinha nenhuma relação com programação"],c:0,h:"Pense no objetivo comum: dar instruções para uma máquina executar tarefas."},
+{cat:"Python",q:"Qual será o resultado? x = 10; y = 3; print(x % y)",a:["1","3","3.33","0"],c:0,h:"O operador % retorna o resto da divisão inteira."},
+{cat:"Ada Lovelace",q:"Qual das situações abaixo mostra melhor a importância histórica de Ada Lovelace?",a:["Ela foi uma das primeiras pessoas a perceber o potencial das máquinas programáveis para muito além de cálculos simples","Ela inventou o primeiro computador com teclado e mouse","Ela criou a primeira rede social","Ela inventou a linguagem Python"],c:0,h:"A ideia principal envolve o potencial das máquinas programáveis além de simples cálculos."},
+{cat:"Ada Lovelace",q:"O pai de Ada Lovelace, Lord Byron, era conhecido principalmente por ser:",a:["Cientista","Poeta","Engenheiro","Matemático"],c:1,h:"Lord Byron ficou famoso principalmente por sua produção literária."},
+{cat:"Ada Lovelace",q:"Qual característica da educação de Ada teve grande importância para seu trabalho futuro?",a:["Ela teve contato com matemática e ciências","Ela estudou apenas literatura","Ela aprendeu somente música","Ela não recebeu educação formal"],c:0,h:"Pense nas áreas que ajudaram Ada a desenvolver seu pensamento lógico."},
+{cat:"Python",q:"Observe: numero = 10; if numero > 5: print(\"A\") else: print(\"B\"). O que será exibido?",a:["A","B","A e B","Nada"],c:0,h:"Compare o valor 10 com a condição numero > 5."},
+{cat:"Python",q:"Observe: idade = 15; idade = idade + 2; print(idade). Qual será o resultado?",a:["15","17","2","152"],c:1,h:"A variável começa com 15 e depois recebe mais 2."}
+];
+
+function startQuiz(mode = "easy"){
+  const source = mode === "medium" ? mediumQuestions : easyQuestions;
+  const py=shuffle(source.filter(x=>x.cat==="Python")).slice(0,5);
+  const ada=shuffle(source.filter(x=>x.cat==="Ada Lovelace")).slice(0,5);
+  quiz=shuffle([...py,...ada]); index=0; score=0; userAnswers=[]; currentMode=mode;
+  show("quiz"); renderQuestion();
+}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo({top:0,behavior:"smooth"})}
+function renderQuestion(){
+  answered=false;
+  const item=quiz[index];
+  document.getElementById("topic").textContent=item.cat.toUpperCase();
+  document.getElementById("counter").textContent=`Questão ${index+1} de 10`;
+  document.getElementById("liveScore").textContent=`Acertos: ${score}`;
+  document.getElementById("progress").style.width=`${(index/10)*100}%`;
+  document.getElementById("qNum").textContent=String(index+1).padStart(2,"0");
+  document.getElementById("question").textContent=item.q;
+  document.getElementById("hint").textContent="💡 "+item.h;
+  document.getElementById("hint").classList.remove("show");
+  document.getElementById("feedback").textContent="";
+  const next=document.getElementById("nextBtn"); next.disabled=true;
+  next.textContent=index===9?"Ver resultado →":"Próxima →";
+  const opts=document.getElementById("options"); opts.innerHTML="";
+  item.a.forEach((text,i)=>{
+    const b=document.createElement("button"); b.className="option";
+    b.innerHTML=`<strong>${String.fromCharCode(65+i)})</strong> ${text}`;
+    b.onclick=()=>selectAnswer(i,b); opts.appendChild(b);
+  });
+}
+function selectAnswer(choice,btn){
+  if(answered)return;
+  answered=true;
+  const item=quiz[index];
+  userAnswers.push({item,choice});
+  document.querySelectorAll(".option").forEach((b,i)=>{b.disabled=true;if(i===item.c)b.classList.add("correct")});
+  if(choice===item.c){score++;btn.classList.add("correct");document.getElementById("feedback").textContent="✓ Resposta correta!"}
+  else {btn.classList.add("wrong");document.getElementById("feedback").textContent=`Resposta correta: ${String.fromCharCode(65+item.c)}) ${item.a[item.c]}`}
+  document.getElementById("liveScore").textContent=`Acertos: ${score}`;
+  document.getElementById("nextBtn").disabled=false;
+}
+function nextQuestion(){if(!answered)return;if(index<9){index++;renderQuestion()}else showResult()}
+function toggleHint(){document.getElementById("hint").classList.toggle("show")}
+function showResult(){
+  show("result");
+  document.getElementById("progress").style.width="100%";
+  document.getElementById("scoreText").textContent=`${score}/10`;
+  const deg=score*36;
+  document.getElementById("scoreRing").style.background=`conic-gradient(var(--cyan) 0deg,var(--purple) ${deg}deg,#18243a ${deg}deg)`;
+  const prize=document.getElementById("prize");
+  prize.style.display=score>=8?"block":"none";
+  document.getElementById("resultTitle").textContent=score>=8?"Missão concluída!":"Quase lá!";
+  document.getElementById("resultText").textContent=score>=8
+    ?"Você atingiu a pontuação necessária para receber o prêmio."
+    :"Você terminou o desafio. Tente novamente para buscar 8/10 ou mais.";
+  const review=document.getElementById("review"); review.innerHTML="";
+  userAnswers.forEach((x,i)=>{
+    const ok=x.choice===x.item.c;
+    const d=document.createElement("div"); d.className=`review-item ${ok?"ok":"no"}`;
+    d.innerHTML=`<small>${i+1}. ${x.item.cat}</small><b>${ok?"✓":"✗"} ${x.item.q}</b><small>Sua resposta: ${String.fromCharCode(65+x.choice)}) ${x.item.a[x.choice]}${ok?"":" • Correta: "+String.fromCharCode(65+x.item.c)+") "+x.item.a[x.item.c]}</small>`;
+    review.appendChild(d);
+  });
+}
+function goHome(){show("home")}
+
 </script>
 </body>
 </html>
