@@ -84,8 +84,6 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .review-item{padding:14px 16px;border:1px solid var(--border);border-radius:14px;background:#0b1423}
 .review-item.ok{border-left:3px solid var(--green)}.review-item.no{border-left:3px solid var(--red)}
 .review-item small{color:var(--muted)}.review-item b{display:block;margin:5px 0}
-footer{text-align:center;color:#64748b;font-size:12px;padding:0 0 30px}
-.toast{position:fixed;right:20px;bottom:20px;padding:12px 16px;border:1px solid var(--border);background:#111a2b;border-radius:12px;color:var(--text);display:none}
 @media(max-width:700px){.levels{grid-template-columns:1fr}.card{padding:20px}.quiz-head{align-items:flex-start}.question-row{flex-wrap:wrap}.hint-btn{margin-left:0}.actions{gap:10px}.actions button{flex:1}}
 
 </style>
@@ -110,10 +108,10 @@ footer{text-align:center;color:#64748b;font-size:12px;padding:0 0 30px}
       <p>10 questões aleatórias das 25 questões de nível médio.</p>
       <span class="badge">DISPONÍVEL</span>
     </div>
-    <div class="level disabled">
+    <div class="level" onclick="startQuiz('hard')">
       <div class="level-icon">⬢</div><h2>Difícil</h2>
-      <p>Novos desafios serão adicionados em breve.</p>
-      <span class="badge">EM BREVE</span>
+      <p>10 questões aleatórias entre 25 desafios de nível difícil.</p>
+      <span class="badge">DISPONÍVEL</span>
     </div>
   </div>
 </main>
@@ -149,16 +147,12 @@ footer{text-align:center;color:#64748b;font-size:12px;padding:0 0 30px}
   </div>
 </section>
 
-<footer>TECHQUIZ • Aprenda, responda e evolua.</footer>
+
 </div>
-<div id="toast" class="toast"></div>
-
-
 
 
 <script>
 let currentMode = "easy";
-
 const easyQuestions = [
  {cat:"Python",q:"Qual é a principal função do comando print() em Python?",a:["Ler um dado inserido pelo usuário.","Exibir uma mensagem ou resultado na tela.","Somar dois números inteiros.","Criar uma variável no código."],c:1,h:"Pense no que aparece no terminal quando você usa este comando."},
  {cat:"Python",q:"Qual é a saída correta do comando print(5 + 3 * 2)?",a:["16","11","10","13"],c:1,h:"A multiplicação é feita antes da soma."},
@@ -186,13 +180,6 @@ const easyQuestions = [
  {cat:"Ada Lovelace",q:"Ada Lovelace faleceu ainda muito jovem, com apenas:",a:["20 anos","36 anos","50 anos","80 anos"],c:1,h:"A idade está na casa dos 30."},
  {cat:"Ada Lovelace",q:"A ideia principal de Ada que mudou o mundo foi perceber que as máquinas do futuro não serviriam apenas para calcular números, mas também para processar:",a:["Apenas moedas de ouro","Qualquer tipo de informação (como música, imagens e textos)","Apenas equações de matemática básica","Apenas previsões do tempo"],c:1,h:"A ideia vai além de números: pense em diferentes formas de informação."}
 ];
-
-let quiz=[], index=0, score=0, answered=false, userAnswers=[];
-
-function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5)}
-
-
-// 25 QUESTÕES DE NÍVEL MÉDIO
 const mediumQuestions = [
 {cat:"Python",q:"O que é um algoritmo?",a:["Uma sequência definida para alcançar um objetivo","Sequência de passos infinita","Jeito fácil de alcançar seu objetivo","É um nome simplificado para um código"],c:0,h:"Pense em uma sequência organizada de passos para resolver um problema."},
 {cat:"Python",q:"Qual nome de variável vai ser inválido?",a:["média final","media_final","Media_Final","mediafinal"],c:0,h:"Observe se o nome possui algo que Python não permite em identificadores."},
@@ -221,12 +208,20 @@ const mediumQuestions = [
 {cat:"Python",q:"Observe: numero = 10; if numero > 5: print(\"A\") else: print(\"B\"). O que será exibido?",a:["A","B","A e B","Nada"],c:0,h:"Compare o valor 10 com a condição numero > 5."},
 {cat:"Python",q:"Observe: idade = 15; idade = idade + 2; print(idade). Qual será o resultado?",a:["15","17","2","152"],c:1,h:"A variável começa com 15 e depois recebe mais 2."}
 ];
-
-function startQuiz(mode = "easy"){
-  const source = mode === "medium" ? mediumQuestions : easyQuestions;
-  const py=shuffle(source.filter(x=>x.cat==="Python")).slice(0,5);
-  const ada=shuffle(source.filter(x=>x.cat==="Ada Lovelace")).slice(0,5);
-  quiz=shuffle([...py,...ada]); index=0; score=0; userAnswers=[]; currentMode=mode;
+const hardQuestions = [{"cat":"Python","q":"Observe o código: idade = 17; if idade >= 18: print(\"Maior de idade\") else: print(\"Menor de idade\"). Qual será a saída?","a":["Maior de idade","Menor de idade","17","Erro"],"c":1,"h":"Compare o valor de idade com 18."},{"cat":"Python","q":"Observe: nota = 7; if nota >= 9: print(\"Excelente\") elif nota >= 6: print(\"Aprovado\") else: print(\"Reprovado\"). O que será exibido?","a":["Excelente","Aprovado","Reprovado","Excelente e Aprovado"],"c":1,"h":"Veja qual condição é verdadeira primeiro."},{"cat":"Python","q":"Qual será a saída? numero = 12; if numero > 10: print(\"A\") elif numero > 5: print(\"B\") else: print(\"C\")","a":["A","B","C","A e B"],"c":0,"h":"12 é maior que 10?"},{"cat":"Python","q":"Observe: idade = 20; tem_documento = True; if idade >= 18 and tem_documento: print(\"Entrada permitida\") else: print(\"Entrada negada\"). O que será exibido?","a":["Entrada permitida","Entrada negada","True","20"],"c":0,"h":"and exige que as duas condições sejam verdadeiras."},{"cat":"Python","q":"Qual será o resultado? idade = 16; autorizacao = True; if idade >= 18 or autorizacao: print(\"Pode entrar\") else: print(\"Não pode entrar\")","a":["Pode entrar","Não pode entrar","True","Erro"],"c":0,"h":"Com or, basta uma condição ser verdadeira."},{"cat":"Python","q":"Observe: numero = 8; if numero > 5 and numero < 10: print(\"Dentro\") else: print(\"Fora\"). O que será exibido?","a":["Dentro","Fora","8","Erro"],"c":0,"h":"Confira as duas comparações feitas com 8."},{"cat":"Python","q":"Qual condição verifica corretamente se idade está entre 13 e 17 anos, incluindo os dois limites?","a":["idade > 13 and idade < 17","idade >= 13 and idade <= 17","idade >= 13 or idade <= 17","idade == 13 and idade == 17"],"c":1,"h":"Os dois limites também precisam ser aceitos."},{"cat":"Python","q":"Observe: x = 5; y = 10; if x > y: print(\"1\") elif x < y: print(\"2\") else: print(\"3\"). Qual será a saída?","a":["1","2","3","1 e 2"],"c":1,"h":"Compare 5 e 10."},{"cat":"Python","q":"Qual será o resultado? numero = 15; if numero % 2 == 0: print(\"Par\") else: print(\"Ímpar\")","a":["Par","Ímpar","15","Erro"],"c":1,"h":"% retorna o resto da divisão."},{"cat":"Python","q":"Observe: senha = \"python\"; if senha == \"Python\": print(\"Acesso permitido\") else: print(\"Acesso negado\"). Por que o acesso será negado?","a":["Porque Python não permite comparar textos","Porque \"python\" e \"Python\" diferem entre maiúsculas e minúsculas","Porque if só funciona com números","Porque == serve para atribuição"],"c":1,"h":"Observe a diferença entre as duas palavras."},{"cat":"Python","q":"Qual será a saída? idade = 18; if idade > 18: print(\"A\") elif idade == 18: print(\"B\") else: print(\"C\")","a":["A","B","C","A e B"],"c":1,"h":"18 é igual a 18."},{"cat":"Python","q":"Observe: nota = 8; if nota >= 7: if nota >= 9: print(\"Excelente\") else: print(\"Aprovado\") else: print(\"Reprovado\"). Qual será a saída?","a":["Excelente","Aprovado","Reprovado","Aprovado e Excelente"],"c":1,"h":"A nota passa de 7, mas não chega a 9."},{"cat":"Python","q":"Qual condição significa que uma pessoa NÃO possui 18 anos?","a":["idade == 18","idade != 18","idade >= 18","idade <= 18"],"c":1,"h":"Procure o operador que significa diferente de."},{"cat":"Python","q":"Observe: numero = 10; if numero >= 5 and numero <= 15: print(\"X\") else: print(\"Y\"). Qual será a saída?","a":["X","Y","10","Erro"],"c":0,"h":"10 está entre 5 e 15."},{"cat":"Python","q":"Observe: temperatura = 35; if temperatura < 15: print(\"Frio\") elif temperatura < 30: print(\"Agradável\") elif temperatura < 40: print(\"Quente\") else: print(\"Muito quente\"). O que será exibido?","a":["Frio","Agradável","Quente","Muito quente"],"c":2,"h":"35 é menor que 40, mas não menor que 30."},{"cat":"Python","q":"Qual condição permite continuar somente se idade for maior ou igual a 18 E a senha estiver correta?","a":["if idade >= 18 or senha == \"1234\":","if idade >= 18 and senha == \"1234\":","if idade <= 18 and senha != \"1234\":","if idade == 18 or senha != \"1234\":"],"c":1,"h":"A palavra E corresponde ao operador and."},{"cat":"Python","q":"Observe: x = 4; if x > 2: print(\"A\"); if x > 3: print(\"B\") else: print(\"C\"). Qual será a saída?","a":["A","B","A e B","A e C"],"c":2,"h":"São dois if independentes, e ambas as condições são verdadeiras."},{"cat":"Python","q":"Qual será a saída? numero = 6; if numero > 10: print(\"A\") elif numero > 5: print(\"B\") elif numero > 2: print(\"C\") else: print(\"D\")","a":["A","B","C","D"],"c":1,"h":"A primeira condição verdadeira é numero > 5."},{"cat":"Python","q":"Observe: idade = 12; acompanhado = False; if idade >= 18 or acompanhado: print(\"Permitido\") else: print(\"Não permitido\"). O que será exibido?","a":["Permitido","Não permitido","False","12"],"c":1,"h":"As duas partes do or são falsas."},{"cat":"Python","q":"Qual será a saída? a = 10; b = 10; if a > b: print(\"Maior\") elif a < b: print(\"Menor\") else: print(\"Igual\")","a":["Maior","Menor","Igual","Erro"],"c":2,"h":"Os dois valores são iguais."},{"cat":"Ada Lovelace","q":"Uma máquina recebe instruções diferentes dependendo de uma situação. Qual conceito da programação se aproxima dessa ideia?","a":["Estrutura condicional","Comentário","Variável de texto","Operador matemático"],"c":0,"h":"É a estrutura que permite tomar decisões com base em condições."},{"cat":"Ada Lovelace","q":"Qual estrutura do Python é utilizada principalmente para executar uma ação quando uma condição é verdadeira?","a":["print","input","if","str"],"c":2,"h":"Pense na palavra usada para iniciar uma condição."},{"cat":"Ada Lovelace","q":"Um programa deve informar Aprovado quando a nota for 7 ou maior. Qual lógica está correta?","a":["if nota > 7: print(\"Aprovado\") else: print(\"Reprovado\")","if nota >= 7: print(\"Aprovado\") else: print(\"Reprovado\")","if nota == 7: print(\"Aprovado\") else: print(\"Reprovado\")","if nota < 7: print(\"Aprovado\") else: print(\"Reprovado\")"],"c":1,"h":"A condição precisa incluir a nota 7."},{"cat":"Ada Lovelace","q":"Por que estruturas condicionais são úteis dentro de uma sequência de instruções?","a":["Permitem escolher ações diferentes dependendo de uma condição","Fazem qualquer computador funcionar sem energia","Substituem todas as variáveis","Servem apenas para exibir textos"],"c":0,"h":"Elas permitem que o programa escolha o que fazer."},{"cat":"Ada Lovelace","q":"Observe: idade = 16; nota = 8; if idade >= 18: print(\"Adulto\") elif nota >= 7: print(\"Aprovado\") else: print(\"Reprovado\"). Qual será a saída?","a":["Adulto","Aprovado","Reprovado","Adulto e Aprovado"],"c":1,"h":"A primeira condição é falsa; depois o elif é verificado."}];
+let quiz=[], index=0, score=0, answered=false, userAnswers=[];
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+function startQuiz(mode="easy"){
+  currentMode=mode;
+  const source = mode==="medium" ? mediumQuestions : mode==="hard" ? hardQuestions : easyQuestions;
+  if(mode==="hard") {
+    quiz=shuffle(source).slice(0,10);
+  } else {
+    const py=shuffle(source.filter(x=>x.cat==="Python")).slice(0,5);
+    const ada=shuffle(source.filter(x=>x.cat==="Ada Lovelace")).slice(0,5);
+    quiz=shuffle([...py,...ada]);
+  }
+  index=0; score=0; answered=false; userAnswers=[];
   show("quiz"); renderQuestion();
 }
 function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo({top:0,behavior:"smooth"})}
@@ -270,12 +265,9 @@ function showResult(){
   document.getElementById("scoreText").textContent=`${score}/10`;
   const deg=score*36;
   document.getElementById("scoreRing").style.background=`conic-gradient(var(--cyan) 0deg,var(--purple) ${deg}deg,#18243a ${deg}deg)`;
-  const prize=document.getElementById("prize");
-  prize.style.display=score>=8?"block":"none";
+  document.getElementById("prize").style.display=score>=8?"block":"none";
   document.getElementById("resultTitle").textContent=score>=8?"Missão concluída!":"Quase lá!";
-  document.getElementById("resultText").textContent=score>=8
-    ?"Você atingiu a pontuação necessária para receber o prêmio."
-    :"Você terminou o desafio. Tente novamente para buscar 8/10 ou mais.";
+  document.getElementById("resultText").textContent=score>=8?"Você atingiu a pontuação necessária para receber o prêmio.":"Você terminou o desafio. Tente novamente para buscar 8/10 ou mais.";
   const review=document.getElementById("review"); review.innerHTML="";
   userAnswers.forEach((x,i)=>{
     const ok=x.choice===x.item.c;
@@ -285,7 +277,6 @@ function showResult(){
   });
 }
 function goHome(){show("home")}
-
 </script>
 </body>
 </html>
